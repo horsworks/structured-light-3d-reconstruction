@@ -1,0 +1,34 @@
+# Build
+/build/
+/out/
+cmake-build-*/
+
+# CMake local files
+CMakeUserPresets.json
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+
+# VS Code local settings
+.vscode/
+
+# vcpkg
+vcpkg_installed/
+
+# Runtime output
+/results/
+/output/
+
+# Large / private datasets
+/data/raw/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

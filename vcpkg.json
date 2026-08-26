@@ -1,0 +1,9 @@
+{
+  "name": "structured-light-3d-reconstruction",
+  "version-string": "0.1.0",
+  "builtin-baseline": "6da16a9600492fbcb7713560d993ac76823290de",
+  "dependencies": [
+    "eigen3",
+    "opencv4"
+  ]
+}
