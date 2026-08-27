@@ -3,8 +3,6 @@
 #include <cctype>
 #include <cmath>
 #include <filesystem>
-#include <fstream>
-#include <iomanip>
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -14,6 +12,7 @@
 
 #include "structured_light/phase.hpp"
 #include "structured_light/phase_unwrap.hpp"
+#include "structured_light/point_cloud_process.hpp"
 #include "structured_light/triangulation.hpp"
 
 namespace
@@ -40,11 +39,30 @@ struct ReconstructionConfig
 
   sl3d::TriangulationOptions triangulation;
 
-  std::string xyz_file;
+  std::string point_cloud_file;
+
+  bool point_cloud_binary = false;
+
   std::string depth_image;
   std::string valid_mask;
   std::string projector_coordinate_image;
 };
+
+bool ReadBool(const cv::FileNode& node, const std::string& name, bool default_value)
+{
+  const cv::FileNode value_node = node[name];
+
+  if (value_node.empty())
+  {
+    return default_value;
+  }
+
+  int value = default_value ? 1 : 0;
+
+  value_node >> value;
+
+  return value != 0;
+}
 
 bool IsImageFile(const std::filesystem::path& path)
 {
@@ -176,7 +194,10 @@ ReconstructionConfig LoadConfig(const std::string& config_path)
 
   config.triangulation.axis = config.axis;
 
-  output_node["xyz_file"] >> config.xyz_file;
+  output_node["point_cloud_file"] >> config.point_cloud_file;
+
+  config.point_cloud_binary =
+      ReadBool(output_node, "point_cloud_binary", config.point_cloud_binary);
 
   output_node["depth_image"] >> config.depth_image;
 
@@ -188,6 +209,11 @@ ReconstructionConfig LoadConfig(const std::string& config_path)
       config.projector_calibration_file.empty())
   {
     throw std::runtime_error("Reconstruction input paths must not be empty.");
+  }
+
+  if (config.point_cloud_file.empty())
+  {
+    throw std::runtime_error("Point cloud output file must not be empty.");
   }
 
   if (config.phase_steps < 3)
@@ -344,35 +370,6 @@ void EnsureParentDirectory(const std::string& file_path)
   }
 }
 
-void SaveXyz(const std::string& file_path, const sl3d::TriangulationResult& result)
-{
-  EnsureParentDirectory(file_path);
-
-  std::ofstream output(file_path);
-
-  if (!output.is_open())
-  {
-    throw std::runtime_error("Failed to open XYZ output file.");
-  }
-
-  output << std::fixed << std::setprecision(6);
-
-  for (int y = 0; y < result.points_3d.rows; ++y)
-  {
-    for (int x = 0; x < result.points_3d.cols; ++x)
-    {
-      if (result.valid_mask.at<unsigned char>(y, x) == 0)
-      {
-        continue;
-      }
-
-      const cv::Vec3d point = result.points_3d.at<cv::Vec3d>(y, x);
-
-      output << point[0] << ' ' << point[1] << ' ' << point[2] << '\n';
-    }
-  }
-}
-
 void SaveDepthImage(const std::string& file_path, const sl3d::TriangulationResult& result,
                     double min_depth, double max_depth)
 {
@@ -478,7 +475,10 @@ int main(int argc, char* argv[])
     const sl3d::TriangulationResult reconstruction = sl3d::TriangulateSingleProjectorCoordinate(
         decoded.coordinate, decoded.valid_mask, calibration, triangulation_options);
 
-    SaveXyz(config.xyz_file, reconstruction);
+    const sl3d::PointCloud::Ptr cloud =
+        sl3d::ConvertTriangulationResultToPointCloud(reconstruction);
+
+    sl3d::SavePointCloud(config.point_cloud_file, *cloud, config.point_cloud_binary);
 
     SaveDepthImage(config.depth_image, reconstruction, config.triangulation.min_depth,
                    config.triangulation.max_depth);
@@ -495,7 +495,9 @@ int main(int argc, char* argv[])
 
     std::cout << "Reconstruction completed.\n"
               << "Valid 3D points: " << reconstruction.point_count << '\n'
-              << "XYZ file: " << config.xyz_file << '\n'
+              << "Point cloud points: " << cloud->size() << '\n'
+              << "Point cloud format: " << (config.point_cloud_binary ? "binary" : "ascii") << '\n'
+              << "Point cloud file: " << config.point_cloud_file << '\n'
               << "Depth image: " << config.depth_image << '\n';
   }
   catch (const std::exception& e)

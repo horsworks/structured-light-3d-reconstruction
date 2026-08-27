@@ -1,0 +1,23 @@
+%YAML:1.0
+
+input:
+  point_cloud_file: "output/reconstruction/raw_points.ply"
+
+pass_through:
+  enabled: 0
+  axis: "z"
+  min_limit: 400.0
+  max_limit: 1200.0
+
+statistical_outlier:
+  enabled: 1
+  mean_k: 30
+  stddev_mul: 1.0
+
+voxel_grid:
+  enabled: 0
+  leaf_size: 0.5
+
+output:
+  point_cloud_file: "output/reconstruction/processed_points.ply"
+  binary: 1

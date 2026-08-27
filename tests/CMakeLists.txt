@@ -98,3 +98,19 @@ add_test(
   NAME triangulation_test
   COMMAND test_triangulation
 )
+
+add_executable(
+  test_point_cloud
+  test_point_cloud.cpp
+)
+
+target_link_libraries(
+  test_point_cloud
+  PRIVATE
+    sl3d
+)
+
+add_test(
+  NAME point_cloud_test
+  COMMAND test_point_cloud
+)

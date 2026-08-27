@@ -19,6 +19,16 @@ find_package(
     features2d
 )
 
+find_package(
+  PCL
+  CONFIG
+  REQUIRED
+  COMPONENTS
+    common
+    io
+    filters
+)
+
 if(MSVC)
   add_compile_options(
     /W4
@@ -42,6 +52,7 @@ add_library(
     src/camera_calibration.cpp
     src/projector_calibration.cpp
     src/triangulation.cpp
+    src/point_cloud_process.cpp
 )
 
 target_include_directories(
@@ -49,12 +60,14 @@ target_include_directories(
   PUBLIC
     ${PROJECT_SOURCE_DIR}/include
     ${OpenCV_INCLUDE_DIRS}
+    ${PCL_INCLUDE_DIRS}
 )
 
 target_link_libraries(
   sl3d
   PUBLIC
     ${OpenCV_LIBS}
+    ${PCL_LIBRARIES}
 )
 
 add_executable(
@@ -115,6 +128,17 @@ add_executable(
 
 target_link_libraries(
   reconstruct
+  PRIVATE
+    sl3d
+)
+
+add_executable(
+  process_point_cloud
+  apps/process_point_cloud_app.cpp
+)
+
+target_link_libraries(
+  process_point_cloud
   PRIVATE
     sl3d
 )

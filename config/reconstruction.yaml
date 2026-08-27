@@ -7,24 +7,21 @@ input:
 
 fringe:
   orientation: "vertical"
-
   frequencies: [70, 64, 59]
   phase_steps: 4
-
   modulation_threshold: 10.0
 
 triangulation:
   min_depth: 100.0
   max_depth: 3000.0
-
   max_iterations: 8
-
   projector_residual_threshold: 0.25
-
   pixel_step: 1
 
 output:
-  xyz_file: "output/reconstruction/points.ply"
+  point_cloud_file: "output/reconstruction/raw_points.ply"
+  point_cloud_binary: 1
+
   depth_image: "output/reconstruction/depth.png"
   valid_mask: "output/reconstruction/valid_mask.png"
   projector_coordinate_image: "output/reconstruction/projector_coordinate.png"
