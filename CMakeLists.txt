@@ -13,7 +13,10 @@ find_package(
   REQUIRED
   COMPONENTS
     core
+    imgproc
     imgcodecs
+    calib3d
+    features2d
 )
 
 if(MSVC)
@@ -36,6 +39,7 @@ add_library(
     src/fringe.cpp
     src/phase.cpp
     src/phase_unwrap.cpp
+    src/camera_calibration.cpp
 )
 
 target_include_directories(
@@ -76,6 +80,17 @@ add_executable(
 
 target_link_libraries(
   generate_fringe
+  PRIVATE
+    sl3d
+)
+
+add_executable(
+  calibrate_camera
+  apps/calibrate_camera.cpp
+)
+
+target_link_libraries(
+  calibrate_camera
   PRIVATE
     sl3d
 )

@@ -1,0 +1,44 @@
+%YAML:1.0
+
+input:
+  image_dir: "data/raw/camera_calibration"
+
+board:
+  pattern: "circles"
+  columns: 11
+  rows: 9
+  spacing: 15.0
+
+circle_detector:
+  min_threshold: 5.0
+  max_threshold: 250.0
+  threshold_step: 5.0
+
+  min_repeatability: 2
+  min_dist_between_blobs: 5.0
+
+  filter_by_area: 1
+  min_area: 200.0
+  max_area: 5000.0
+
+  filter_by_circularity: 1
+  min_circularity: 0.35
+
+  filter_by_convexity: 1
+  min_convexity: 0.60
+
+  filter_by_inertia: 1
+  min_inertia_ratio: 0.10
+
+  filter_by_color: 0
+  blob_color: 255
+
+calibration:
+  fix_k3: 1
+
+output:
+  result_file: "output/camera_calibration/camera_calibration.yml"
+  detection_dir: "output/camera_calibration/detections"
+  blob_dir: "output/camera_calibration/blobs"
+  save_detection_debug: 1
+  save_blob_debug: 1

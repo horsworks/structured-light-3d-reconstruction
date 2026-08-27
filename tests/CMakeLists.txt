@@ -50,3 +50,19 @@ add_test(
   NAME phase_unwrap_test
   COMMAND test_phase_unwrap
 )
+
+add_executable(
+  test_camera_calibration
+  test_camera_calibration.cpp
+)
+
+target_link_libraries(
+  test_camera_calibration
+  PRIVATE
+    sl3d
+)
+
+add_test(
+  NAME camera_calibration_test
+  COMMAND test_camera_calibration
+)
