@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(
-  structured_light_3d_reconstruction
-  LANGUAGES CXX
-)
+project(structured_light_3d_reconstruction)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -38,6 +35,7 @@ add_library(
   STATIC
     src/fringe.cpp
     src/phase.cpp
+    src/phase_unwrap.cpp
 )
 
 target_include_directories(

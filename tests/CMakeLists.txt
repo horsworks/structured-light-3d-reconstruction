@@ -34,3 +34,19 @@ add_test(
   NAME wrapped_phase_test
   COMMAND test_phase
 )
+
+add_executable(
+  test_phase_unwrap
+  test_phase_unwrap.cpp
+)
+
+target_link_libraries(
+  test_phase_unwrap
+  PRIVATE
+    sl3d
+)
+
+add_test(
+  NAME phase_unwrap_test
+  COMMAND test_phase_unwrap
+)
