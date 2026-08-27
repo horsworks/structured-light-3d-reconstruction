@@ -57,7 +57,7 @@ target_link_libraries(
 
 add_executable(
   sl3d_info
-  apps/sl3d_info.cpp
+  apps/sl3d_info_app.cpp
 )
 
 target_include_directories(
@@ -75,7 +75,7 @@ target_link_libraries(
 
 add_executable(
   generate_fringe
-  apps/generate_fringe.cpp
+  apps/generate_fringe_app.cpp
 )
 
 target_link_libraries(
@@ -86,7 +86,7 @@ target_link_libraries(
 
 add_executable(
   calibrate_camera
-  apps/calibrate_camera.cpp
+  apps/calibrate_camera_app.cpp
 )
 
 target_link_libraries(
