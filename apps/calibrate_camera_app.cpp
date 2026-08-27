@@ -26,6 +26,23 @@ bool IsImageFile(const std::filesystem::path& path)
          extension == ".jpeg" || extension == ".tif" || extension == ".tiff";
 }
 
+std::string PatternToString(sl3d::CalibrationPattern pattern)
+{
+  switch (pattern)
+  {
+    case sl3d::CalibrationPattern::kChessboard:
+      return "chessboard";
+
+    case sl3d::CalibrationPattern::kSymmetricCircles:
+      return "circles";
+
+    case sl3d::CalibrationPattern::kAsymmetricCircles:
+      return "asymmetric_circles";
+  }
+
+  throw std::runtime_error("Unknown calibration pattern.");
+}
+
 }  // namespace
 
 int main(int argc, char* argv[])
@@ -183,6 +200,8 @@ int main(int argc, char* argv[])
 
     file_storage << "image_height" << image_size.height;
 
+    file_storage << "board_pattern" << PatternToString(config.board.pattern);
+
     file_storage << "board_columns" << config.board.columns;
 
     file_storage << "board_rows" << config.board.rows;
@@ -205,6 +224,22 @@ int main(int argc, char* argv[])
 
     file_storage << "used_images" << used_images;
 
+    file_storage << "views"
+                 << "[";
+
+    for (std::size_t i = 0; i < image_points.size(); ++i)
+    {
+      file_storage << "{";
+
+      file_storage << "image" << used_images[i];
+
+      file_storage << "image_points" << image_points[i];
+
+      file_storage << "}";
+    }
+
+    file_storage << "]";
+
     file_storage.release();
 
     std::cout << "\nCamera calibration completed.\n"
@@ -222,7 +257,8 @@ int main(int argc, char* argv[])
       std::cout << "  " << used_images[i] << ": " << result.per_view_errors[i] << " px\n";
     }
 
-    std::cout << "\nSaved to: " << result_path.string() << '\n';
+    std::cout << "\nSaved calibration views: " << image_points.size() << '\n'
+              << "Saved to: " << result_path.string() << '\n';
   }
   catch (const std::exception& e)
   {

@@ -66,3 +66,19 @@ add_test(
   NAME camera_calibration_test
   COMMAND test_camera_calibration
 )
+
+add_executable(
+  test_projector_calibration
+  test_projector_calibration.cpp
+)
+
+target_link_libraries(
+  test_projector_calibration
+  PRIVATE
+    sl3d
+)
+
+add_test(
+  NAME projector_calibration_test
+  COMMAND test_projector_calibration
+)

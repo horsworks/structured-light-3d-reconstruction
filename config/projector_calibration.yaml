@@ -1,0 +1,23 @@
+%YAML:1.0
+
+input:
+  image_dir: "data/raw/projector_calibration"
+  camera_calibration_file: "output/camera_calibration/camera_calibration.yml"
+
+projector:
+  width: 1280
+  height: 800
+
+fringe:
+  frequencies: [70, 64, 59]
+  phase_steps: 4
+  modulation_threshold: 10.0
+
+calibration:
+  fix_k3: 1
+  min_valid_points_per_pose: 20
+
+output:
+  result_file: "output/projector_calibration/projector_calibration.yml"
+  phase_dir: "output/projector_calibration/phases"
+  save_phase_debug: 1
