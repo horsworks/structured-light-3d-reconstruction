@@ -1,78 +1,102 @@
 # Structured Light 3D Reconstruction
 
-基于 C++17 的相移结构光三维重建项目。
+基于 C++17 实现的 DLP 相移结构光三维重建项目，包含相位计算、相机/投影仪标定、三角测量以及基础点云处理。
 
-本项目主要用于个人重新梳理结构光三维重建中的算法流程、数据接口与工程实现。
-
-## 核心流程
+## 项目流程
 
 ```text
-条纹生成
+正弦条纹生成
     ↓
-相移图像
+N 步相移
     ↓
 包裹相位
     ↓
-多频展开
+三频外差展开
     ↓
 绝对相位
     ↓
-相机 / 投影仪标定
+相机标定
     ↓
-三角测量
+投影仪标定
+    ↓
+相机—投影仪外参
+    ↓
+单方向三角测量
     ↓
 三维点云
     ↓
-精度评价
+点云后处理
 ```
 
-## 功能模块
+## 已实现功能
 
-| 模块 | 说明 |
-| --- | --- |
-| 条纹生成 | 生成水平/垂直正弦条纹，支持周期、相移步数等参数设置 |
-| 相位计算 | N 步相移法，计算包裹相位、调制度及有效区域 |
-| 多频展开 | 基于多频外差恢复绝对相位 |
-| 相机标定 | 相机内参、畸变参数及外参标定 |
-| 投影仪标定 | 基于绝对相位建立投影仪坐标对应并完成标定 |
-| 三角测量 | 根据相机与投影仪几何关系恢复三维坐标 |
-| 点云处理 | 点云生成、导出及基础预处理 |
-| 精度评价 | 重投影误差、平面/球拟合及 RMSE 等指标 |
+- 正弦相移条纹生成
+- N 步相移包裹相位计算
+- 调制度计算与有效区域筛选
+- 三频外差相位展开
+- 相机标定
+- DLP 投影仪标定
+- 相机—投影仪相对位姿标定
+- 单方向结构光三维重建
+- PLY / PCD 点云导入导出
+- ASCII / Binary 点云格式
+- PassThrough 滤波
+- Statistical Outlier Removal
+- VoxelGrid 降采样
+- 核心模块单元测试
 
 ## 项目结构
 
 ```text
 structured-light-3d-reconstruction/
+├── apps/
+│   ├── generate_fringe_app.cpp
+│   ├── calibrate_camera_app.cpp
+│   ├── calibrate_projector_app.cpp
+│   ├── reconstruct_app.cpp
+│   └── process_point_cloud_app.cpp
+│
+├── config/
+│   ├── camera_calibration.yaml
+│   ├── projector_calibration.yaml
+│   ├── reconstruction.yaml
+│   └── point_cloud_processing.yaml
+│
+├── include/structured_light/
+├── src/
+├── tests/
+├── docs/
 ├── CMakeLists.txt
 ├── CMakePresets.json
-├── vcpkg.json
-├── include/structured_light/   # 公开头文件
-├── src/                        # 算法实现
-├── apps/                       # 可执行程序与示例
-├── tests/                      # 测试与数值验证
-├── config/                     # 配置文件
-├── data/sample/                # 小型测试数据
-└── docs/                       # 补充说明
+└── vcpkg.json
 ```
-
-部分目录会随着对应模块的实现逐步加入。
 
 ## 开发环境
 
-- **语言**：C++17
-- **构建**：CMake >= 3.25 + Ninja
-- **包管理**：vcpkg（Manifest Mode）
-- **编译器**：MSVC（Windows），后续使用 GCC 验证 Linux / WSL 构建
-- **核心依赖**：OpenCV（图像处理/标定）、Eigen（线性代数/几何）、PCL（点云处理）
-
-当前第三方依赖通过 `vcpkg.json` 管理。
+- C++17
+- CMake >= 3.25
+- Ninja
+- MSVC
+- vcpkg Manifest Mode
+- OpenCV
+- Eigen
+- PCL
 
 ## 构建
 
-| 配置 | Configure | Build |
-| --- | --- | --- |
-| Debug | `cmake --preset debug` | `cmake --build --preset debug` |
-| Release | `cmake --preset release` | `cmake --build --preset release` |
+Debug：
+
+```powershell
+cmake --preset debug
+cmake --build --preset debug
+```
+
+Release：
+
+```powershell
+cmake --preset release
+cmake --build --preset release
+```
 
 运行测试：
 
@@ -80,6 +104,37 @@ structured-light-3d-reconstruction/
 ctest --preset debug
 ```
 
-## License
+## 主要程序
 
-暂未设置开源许可证。
+### 相机标定
+
+```powershell
+.\build\debug\calibrate_camera.exe `
+  config\camera_calibration.yaml
+```
+
+### 投影仪标定
+
+```powershell
+.\build\debug\calibrate_projector.exe `
+  config\projector_calibration.yaml
+```
+
+### 三维重建
+
+```powershell
+.\build\debug\reconstruct.exe `
+  config\reconstruction.yaml
+```
+
+### 点云处理
+
+```powershell
+.\build\debug\process_point_cloud.exe `
+  config\point_cloud_processing.yaml
+```
+
+## 当前限制
+
+- 当前相位展开实现为特定三频外差方案
+- 实物重建采用单方向条纹
