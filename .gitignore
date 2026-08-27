@@ -23,8 +23,8 @@ vcpkg_installed/
 /results/
 /output/
 
-# Large / private datasets
-/data/raw/
+# private datasets
+/data/
 
 # Logs
 *.log

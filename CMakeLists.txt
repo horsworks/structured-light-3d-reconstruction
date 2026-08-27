@@ -41,6 +41,7 @@ add_library(
     src/phase_unwrap.cpp
     src/camera_calibration.cpp
     src/projector_calibration.cpp
+    src/triangulation.cpp
 )
 
 target_include_directories(
@@ -103,6 +104,17 @@ add_executable(
 
 target_link_libraries(
   calibrate_projector
+  PRIVATE
+    sl3d
+)
+
+add_executable(
+  reconstruct
+  apps/reconstruct_app.cpp
+)
+
+target_link_libraries(
+  reconstruct
   PRIVATE
     sl3d
 )

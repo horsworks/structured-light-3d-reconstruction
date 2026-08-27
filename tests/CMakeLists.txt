@@ -82,3 +82,19 @@ add_test(
   NAME projector_calibration_test
   COMMAND test_projector_calibration
 )
+
+add_executable(
+  test_triangulation
+  test_triangulation.cpp
+)
+
+target_link_libraries(
+  test_triangulation
+  PRIVATE
+    sl3d
+)
+
+add_test(
+  NAME triangulation_test
+  COMMAND test_triangulation
+)
