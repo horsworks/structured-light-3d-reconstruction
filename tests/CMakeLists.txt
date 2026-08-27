@@ -18,3 +18,19 @@ add_test(
   NAME fringe_generation_test
   COMMAND test_fringe
 )
+
+add_executable(
+  test_phase
+  test_phase.cpp
+)
+
+target_link_libraries(
+  test_phase
+  PRIVATE
+    sl3d
+)
+
+add_test(
+  NAME wrapped_phase_test
+  COMMAND test_phase
+)

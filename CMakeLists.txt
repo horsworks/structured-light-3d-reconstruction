@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.25)
 
 project(
   structured_light_3d_reconstruction
-  VERSION 0.1.0
-  DESCRIPTION "C++ implementation of a structured-light 3D reconstruction pipeline"
   LANGUAGES CXX
 )
 
@@ -39,6 +37,7 @@ add_library(
   sl3d
   STATIC
     src/fringe.cpp
+    src/phase.cpp
 )
 
 target_include_directories(
